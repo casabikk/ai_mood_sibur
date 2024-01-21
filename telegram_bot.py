@@ -15,15 +15,22 @@ def start_message(message):
 def get_text_messages(message):
     query = message.text  
     answer = get("http://127.0.0.1:8000/get_comments/", params = {'user_text': query}).json()
-    if answer['message'] == "Not found":
+    if answer['message'] == "Not found":  
         bot.send_message(message.chat.id, "К сожалению таких комментариев нет(")
     else:
         data = answer['comments']
-        comments = ''
-        for comment in data:
-            comments += comment['text'] + '\n'
+        if len(data) == 0:
+            bot.send_message(message.chat.id, "К сожалению таких комментариев нет(")
+        else:
+            comments = ''
+            for comment in data:
+                comments += comment['text'] + '\n'
             answer2 = get("http://127.0.0.1:8000/get_mood", params = {'comments': comments, 'message': query}).json()
-            bot.send_message(message.chat.id, f"В группе Сибура к данному высказыванию относятся оценочно с настроением {answer2['mood']}\10 ")
+            aitxt = answer2['mood']
+            if aitxt.isdigit():
+                bot.send_message(message.chat.id, f"В группе Сибура к данному высказыванию относятся оценочно с настроением {aitxt}\10 ")
+            else:
+                bot.send_message(message.chat.id, f"Простите, не удалось определить отношение к тексту.")
 
 
 

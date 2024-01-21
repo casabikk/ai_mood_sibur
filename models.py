@@ -35,3 +35,12 @@ class Persons(BaseModel):
     class Meta:
         db_table = 'Likes'
         order_by = ('like_id',)
+
+class Mood(BaseModel):
+    comment_id = IntegerField(unique=True)
+    comment = TextField()
+    mood = IntegerField()
+
+    class Meta:
+        db_table = 'Mood'
+        order_by = ('mood_id',)

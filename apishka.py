@@ -25,7 +25,7 @@ def get_comments(user_text: str):
 @router.get("/get_mood")
 def get_mood(comments: str, message: str):
     response = g4f.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": f"{comments}\nДай мне оценку отношения этого текста к слову '{message}'. Оценка должна быть от 1 до 10, где 1 означает плохое отношение, а 10 - очень хорошее. ВАЖНО: ответить ты мне должен только одним числом от 1 до 10 и все, больше ничего отвечать не нужно"}],)
-        
+        model=g4f.models.gpt_4,
+        messages=[{"role": "user", "content": f"{comments}\n\n\nДай мне оценку отношения этого текста к слову '{message}'. Оценка должна быть от 1 до 10, где 1 означает плохое отношение, а 10 - очень хорошее. ВАЖНО: ответить ты мне должен только одним числом от 1 до 10 и все, больше ничего отвечать не нужно"}],)
+    
     return {"mood": response}
