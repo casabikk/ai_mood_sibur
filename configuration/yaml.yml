@@ -1,0 +1,6 @@
+vk_urls:
+  - url_1: https://example.com/resource1
+  - url_2: https://example.com/resource2
+
+youtube_urls:
+  - url_1: https://www.youtube.com/watch?v=HxNZOzsXJEY&t=7s

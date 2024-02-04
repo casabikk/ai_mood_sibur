@@ -1,12 +1,10 @@
 import time
 import datetime
 import requests
-import pandas as pd
-from configuration.config import vk_token
+from configuration.config import vk_token, owner_id, oowner_id
+from DB_add import db_add_comments, db_add_person
 
 access_token = vk_token
-owner_id = '-75708246'
-oowner_id = '75708246'
 
 def getjson(url, data=None):
     response = requests.get(url, params=data)
@@ -20,7 +18,6 @@ def get_all_posts(access_token, owner_id, count=100, offset=0):
         time.sleep(0.3)
         wall = getjson('https://api.vk.com/method/wall.get',
                        {'owner_id': owner_id, 'offset': offset, 'count': count, 'access_token': access_token, 'v': '5.131'})
-        count_posts = wall['response']['count']
         posts = wall['response']['items']
 
         all_posts.extend(posts)
@@ -128,3 +125,7 @@ person = []
 for i in range(len(all_ids)):
     person.append({'person_id': all_ids[i], 'likes_count': user_likes[all_ids[i]], 'comments_count': user_comments[all_ids[i]]})
 
+db_add_person(person)
+db_add_comments(comments)
+
+print("Done")

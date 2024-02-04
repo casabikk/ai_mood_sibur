@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from fastapi import APIRouter
 from apishka import router
 
 def get_application() -> FastAPI:

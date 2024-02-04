@@ -1,10 +1,16 @@
-from models import *
+from util.models import *
 from peewee import *
-from comments_loading import person, comments
+from vk_comments_loading import person, comments
+
+def db_add_person(person):
+    with connection:
+        Persons.insert_many(person).execute()
+
+def db_add_comments(comments):
+    with connection:
+        Comments.insert_many(comments).execute()
 
 
-with connection:
-    Persons.insert_many(person).execute()
-    Comments.insert_many(comments).execute()
-
-print("Done")
+def db_add_moods(moods):
+    with connection:
+        Mood.insert_many(moods).execute()
