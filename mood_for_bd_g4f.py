@@ -4,6 +4,7 @@ from util.models import Comments
 import string
 import g4f
 
+
 def trim(text, max_length=4096):
     current_length = sum(len(message["content"]) for message in text)
     while text and current_length > max_length:
@@ -30,6 +31,7 @@ def get_mood(comment):
             model=g4f.models.default,
             messages=data,
         )
+        print(response)
     except Exception as e:
         print(e)
         print("Извините, произошла ошибка.")
@@ -38,13 +40,12 @@ def get_mood(comment):
     answer = check_for_digit(response)
 
     if answer is None:
-        print(response)
         return None
     else:
         return answer
 
 
-def check_in_moods(comment_id):
+def check_in_moods(moods, comment_id):
     for mood in moods:
         if mood['comment_id'] == comment_id:
             return True
@@ -52,33 +53,13 @@ def check_in_moods(comment_id):
 
 
 
-def main():
-    all_right = len(moods)
-    all = Comments.select()
-    all = all.dicts().execute()
-    while True:
-        all_none = 0
-        for person in all:
-            comment_id = person['comment_id']
-            if check_in_moods(comment_id):
-                continue
+def mood_me(moods):
+    for person in moods:
+        mood = None
+        while mood is None:
             comment = person['text']
             mood = get_mood(comment)
-            if mood is None:
-                all_none += 1
-                continue
-            all_right += 1
-            temp = {'comment_id': comment_id, 'comment': comment, 'mood': int(mood)}
-            moods.append(temp)
-            print(temp, (all_right / 3235)* 100, '% rightness')
-        if (all_right / 3235) >= 0.7: 
-            break
-    with connection:
-        Mood.insert_many(moods).execute()
-
-    print("Done")
-    print(len(moods))
-    
-if __name__ == '__main__':
-
-    main()
+            if mood is not None:
+                person['mood'] = mood
+            print(mood)    
+    return moods

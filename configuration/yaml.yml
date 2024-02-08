@@ -1,6 +1,6 @@
 vk_urls:
-  - url_1: https://example.com/resource1
-  - url_2: https://example.com/resource2
+  - owner_id = '-75708246'
+  - oowner_id = '75708246'
 
 youtube_urls:
-  - url_1: https://www.youtube.com/watch?v=HxNZOzsXJEY&t=7s
+  - url: "https://www.youtube.com/watch?v=HxNZOzsXJEY&t=57s"

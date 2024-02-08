@@ -14,17 +14,15 @@ class BaseModel(Model):
 
 
 class Comments(BaseModel):
-    comment_id = IntegerField(unique=True)
-    person_id = IntegerField()
-    date = IntegerField()
+    platform_flag = IntegerField()
     text = TextField()
-    parents_stack = TextField()
-    post_id = IntegerField()
     likes = IntegerField()
- 
+    date = IntegerField()
+    mood = IntegerField()
+    
     class Meta:
         db_table = 'Comments'
-        order_by = ('comment_id',)
+        order_by = ('id',)
     
 
 class Persons(BaseModel):
@@ -37,10 +35,10 @@ class Persons(BaseModel):
         order_by = ('like_id',)
 
 class Mood(BaseModel):
-    comment_id = IntegerField(unique=True)
+    id = IntegerField()
     comment = TextField()
     mood = IntegerField()
 
     class Meta:
         db_table = 'Mood'
-        order_by = ('mood_id',)
+        order_by = ('comment_id',)

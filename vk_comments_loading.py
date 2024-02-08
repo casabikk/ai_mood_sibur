@@ -1,8 +1,19 @@
 import time
 import datetime
 import requests
-from configuration.config import vk_token, owner_id, oowner_id
+from configuration.config import vk_token
 from DB_add import db_add_comments, db_add_person
+from mood_for_bd_g4f import mood_me
+import yaml
+
+
+with open('configuration/yaml.yml', 'r') as file:
+    config = yaml.safe_load(file)
+
+
+owner_id = config['vk_urls'][0]['owner_id']
+oowner_id = config['vk_urls'][1]['oowner_id']
+
 
 access_token = vk_token
 
@@ -84,7 +95,7 @@ def get_all_comments(access_token, owner_id, post_id, offset = 0):
             continue
         for c in all_comments['response']['items']:
             if c['text'] != '':
-                comments.append({'comment_id': c['id'], 'person_id': c['from_id'], 'date': c['date'], 'text': c['text'], 'parents_stack': c['parents_stack'], 'post_id': i['id'], 'likes': c['likes']['count']})
+                comments.append({'text': c['text'],  'likes': c['likes']['count'], 'date': c['date'], 'mood': 0})
     return comments
 def user_and_likes(all_ids, list_of_liked):
     user_likes = {}
@@ -125,6 +136,7 @@ person = []
 for i in range(len(all_ids)):
     person.append({'person_id': all_ids[i], 'likes_count': user_likes[all_ids[i]], 'comments_count': user_comments[all_ids[i]]})
 
+comments = mood_me(comments)
 db_add_person(person)
 db_add_comments(comments)
 

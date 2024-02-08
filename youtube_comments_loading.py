@@ -6,13 +6,22 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from time import sleep
 from webdriver_manager.chrome import ChromeDriverManager
+import yaml
+
+
+with open('configuration/yaml.yml', 'r') as file:
+    config = yaml.safe_load(file)
+
+
+url = config['youtube_urls'][0]['url']
+
 
 
 service = Service(ChromeDriverManager().install())
 driver = webdriver.Chrome(service=service)
 
 
-driver.get('https://www.youtube.com/watch?v=n_jQ98DoJKs')
+driver.get(url)
 
 wait = WebDriverWait(driver, 10)
 wait.until(EC.visibility_of_element_located((By.TAG_NAME, "body")))

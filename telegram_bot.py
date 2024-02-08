@@ -27,7 +27,7 @@ def get_text_messages(message):
         moods_dict = {}
         likes_dict = {}
         for com in data:
-            mood_answer = get("http://127.0.0.1:8000/get_data", params = {'id': com['comment_id']}).json()
+            mood_answer = get("http://127.0.0.1:8000/get_data", params = {'text': com['text']}).json()
             if mood_answer['mood'] is None:
                 continue
             else:

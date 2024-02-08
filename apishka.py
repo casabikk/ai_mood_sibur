@@ -25,8 +25,8 @@ def get_comments(user_text: str):
 
 
 @router.get("/get_data")
-def get_mood(id: str):
-    query_mood = Mood.select().where(Mood.comment_id == id)
+def get_mood(text: str):
+    query_mood = Mood.select().where(Mood.text == text)
     moods = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0}
     likes = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0}
     for mood in query_mood:
@@ -41,5 +41,3 @@ def get_mood(id: str):
         return {"mood": None, 'likes': None}
 
     return {"mood": moods, "likes": likes}
-
-
