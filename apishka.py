@@ -1,6 +1,6 @@
 from typing import Union
 from fastapi import APIRouter
-from util.models import Comments, Mood
+from models import Comments, Mood
 from peewee import fn
 import g4f
 

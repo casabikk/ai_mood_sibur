@@ -1,6 +1,5 @@
-vk_urls:
-  - owner_id = '-75708246'
-  - oowner_id = '75708246'
-
-youtube_urls:
-  - url: "https://www.youtube.com/watch?v=HxNZOzsXJEY&t=57s"
+vk:
+  - '1' : 'https://vk.com/club1900126'
+youtube:
+  - "1": "s"
+  
