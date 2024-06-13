@@ -1,0 +1,11 @@
+fastapi
+typing
+peewee
+telebot
+requests
+numpy
+matplotlib
+statistics
+os
+time
+datetime
