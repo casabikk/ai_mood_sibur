@@ -1,7 +1,6 @@
 from googleapiclient.discovery import build
 from urllib.parse import urlparse, parse_qs
 from configuration.config import youtube_api_key
-import re
 
 
 def get_youtube_client(api_key):

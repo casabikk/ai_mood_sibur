@@ -1,43 +1,53 @@
-from typing import Union
 from fastapi import APIRouter
-from models import Comments, Mood
-from peewee import fn
-import g4f
+from models import Comments
+from datetime import datetime
 
 router = APIRouter()
 
+from fastapi import APIRouter
+
+router = APIRouter()
 @router.get("/get_comments")
-def get_comments(user_text: str):
-    sql_query = f"""
-        select *, text(text) <-> '{user_text}' as dist
-        from public."Comments"
-        where text(text) <-> '{user_text}' < 0.75
-        order by dist"""
-    comments = Comments.raw(sql_query)                             
+async def get_comments(user_text: str):
+    prepared_text = ' & '.join(user_text.split()) + ':*'
+
+    sql_query = """
+        SELECT *,
+        ts_rank_cd(to_tsvector('russian', text), plainto_tsquery('russian', %s)) AS rank
+        FROM public."Comments"
+        WHERE to_tsvector('russian', text) @@ plainto_tsquery('russian', %s)
+        ORDER BY rank DESC
+        LIMIT 100;  -- Ограничиваем результат 100 записями для избежания перегрузки
+    """
+    
+    comments = Comments.raw(sql_query, prepared_text, prepared_text)
+    
     data = []
     for comment in comments:
-        dict = {"comment_id": comment.comment_id, "person_id": comment.person_id, "date": comment.date, "text": comment.text, "parents_stack": comment.parents_stack, "post_id": comment.post_id, "likes": comment.likes}
-        data.append(dict)
-    if len(comments) == 0:
+        try:
+            date_obj = datetime.strptime(comment.date, '%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            date_obj = comment.date 
+        print(comment.date)
+        data.append({
+            "channel_id": comment.channel_id,
+            "comment_id": comment.comment_id,
+            "date": date_obj.strftime('%Y-%m-%d %H:%M:%S') if isinstance(date_obj, datetime) else comment.date,
+            "text": comment.text,
+            "user_id": comment.user_id,
+            "mood": comment.mood,
+            "likes": comment.likes,
+            "platform": comment.platform
+        })
+
+    if not data:
         return {"message": "Not found"}
-    return {"message": "Found", "comments": data}
+    
+    return {"message": "Comments found", "comments": data}
 
 
 
 @router.get("/get_data")
 def get_mood(text: str):
-    query_mood = Mood.select().where(Mood.text == text)
-    moods = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0}
-    likes = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0}
-    for mood in query_mood:
-        if mood.mood not in moods or mood.mood not in likes:
-            moods[mood.mood] = 0
-            likes[mood.mood] = 0
-        like = Comments.select().where(Comments.text == mood.comment)[0]
-        likes[mood.mood] += like.likes
-        moods[mood.mood] += 1
-    
-    if len(moods) == 0:
-        return {"mood": None, 'likes': None}
-
-    return {"mood": moods, "likes": likes}
+    query_mood = Comments.get(Comments.text == text)
+    return {"mood": query_mood.mood, "likes": query_mood.likes}
